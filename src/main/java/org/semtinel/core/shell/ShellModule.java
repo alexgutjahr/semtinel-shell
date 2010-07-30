@@ -1,6 +1,6 @@
 /**
  * This file is part of Semtinel (http://www.semtinel.org).
- * Copyright (c) 2007-2010 Kai Eckert (http://www.kaiec.org).
+ * Copyright (c) 2007-${year} Kai Eckert (http://www.kaiec.org).
  *
  * Semtinel is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Semtinel.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Semtinel. If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.semtinel.core.shell;
