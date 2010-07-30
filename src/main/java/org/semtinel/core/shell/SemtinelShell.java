@@ -34,7 +34,7 @@ public class SemtinelShell extends Thread implements Shell {
 
     private final String SHELL_PROMPT = "semtinel> ";
 
-    private final String version = "v0.0.1";
+    private final String VERSION = "v0.0.1";
 
     private boolean shutdownRequested;
 
@@ -65,11 +65,9 @@ public class SemtinelShell extends Thread implements Shell {
                 runner.executeCommand(result.getCommandName(), result.getArguments());
             }
         } catch (IOException e) {
-            setStatus(ShellStatus.SHUTTING_DOWN);
             shutdown();
         }
 
-        setStatus(ShellStatus.SHUTTING_DOWN);
         shutdown();
     }
 
@@ -85,7 +83,7 @@ public class SemtinelShell extends Thread implements Shell {
     }
 
     private void shutdown() {
-        // hook for performing operations on shutdown
+        setStatus(ShellStatus.SHUTTING_DOWN);
     }
 
     @Override
@@ -127,7 +125,7 @@ public class SemtinelShell extends Thread implements Shell {
         sb.append("   /\\ \\L\\ \\/\\  __//\\ \\/\\ \\/\\ \\ \\ \\_\\ \\ \\/\\ \\/\\ \\/\\  __/ \\_\\ \\_ ").append(newLine);
         sb.append("   \\ `\\____\\ \\____\\ \\_\\ \\_\\ \\_\\ \\__\\\\ \\_\\ \\_\\ \\_\\ \\____\\/\\____\\").append(newLine);
         sb.append("    \\/_____/\\/____/\\/_/\\/_/\\/_/\\/__/ \\/_/\\/_/\\/_/\\/____/\\/____/").append(newLine);
-        sb.append("                                         Semtinel Shell ").append(version);
+        sb.append("                                         Semtinel Shell ").append(VERSION);
         
         return sb.toString();
     }
