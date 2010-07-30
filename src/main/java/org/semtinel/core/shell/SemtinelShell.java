@@ -84,6 +84,7 @@ public class SemtinelShell extends Thread implements Shell {
 
     private void shutdown() {
         setStatus(ShellStatus.SHUTTING_DOWN);
+        flashMessage("bye!");
     }
 
     @Override

@@ -80,11 +80,11 @@ public class CommandRunner {
             );
         } catch (IllegalArgumentException e2) {
             shell.flashMessage(
-                    String.format("method for command %s got wrong parameters!", method.getName())
+                    String.format("invalid arguments for method %s!", method.getName())
             );
         }  catch (InvocationTargetException e3) {
             shell.flashMessage(
-                String.format("invocation target exception for command %s", method.getName())
+                String.format("invocation target exception for method %s", method.getName())
             );
         } 
     }
