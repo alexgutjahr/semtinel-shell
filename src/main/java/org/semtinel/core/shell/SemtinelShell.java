@@ -38,6 +38,8 @@ public class SemtinelShell extends Thread implements Shell {
 
     private boolean shutdownRequested;
 
+    private boolean verbose = false;
+
     @Inject
     private Parser parser;
 
@@ -73,7 +75,6 @@ public class SemtinelShell extends Thread implements Shell {
 
     private void init() {
         setStatus(ShellStatus.BOOTING);
-        runner.init();
         flashMessage(getWelcomeMessage());
     }
 
@@ -93,13 +94,20 @@ public class SemtinelShell extends Thread implements Shell {
     }
 
     @Override
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
+    }
+
+    @Override
     public void flashMessage(String message) {
         System.out.println(SHELL_PROMPT + message);
     }
 
     @Override
     public void setStatus(ShellStatus status) {
-        flashMessage(status.getMessage());
+        if (verbose) {
+            flashMessage(status.getMessage());
+        }
     }
 
     @Override

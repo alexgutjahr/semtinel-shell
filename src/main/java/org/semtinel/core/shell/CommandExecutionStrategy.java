@@ -52,4 +52,9 @@ public class CommandExecutionStrategy {
     public void shutdown() {
         shell.requestShutdown();
     }
+
+    @Command(name = "config", help = "configure the shell")
+    public void config(@Option(key = "verbose", help = "define logging behavior") boolean verbose) {
+        shell.setVerbose(verbose);                
+    }
 }

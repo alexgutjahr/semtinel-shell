@@ -18,32 +18,17 @@
 
 package org.semtinel.core.shell;
 
-import com.google.common.base.Preconditions;
-import com.google.inject.Inject;
-
 /**
  * @author Alexander Hanschke <dev@alexander-hanschke.de>
  * @version 30.07.2010
  */
-public class Parser {
+public class CommandNotBoundException extends RuntimeException {
 
-    @Inject
-    private Shell shell;
-
-    public ParseResult parse(String request) {
-        shell.setStatus(ShellStatus.PARSING);
-        String[] tokens = tokenize(request);
-
-        Preconditions.checkNotNull(tokens, "error while parsing request!");
-        Preconditions.checkState(tokens.length > 0);
-
-        return new ParseResult(tokens[0], new String[]{""});
+    public CommandNotBoundException(String message) {
+        super(message);
     }
 
-    private String[] tokenize(String request) {
-        Preconditions.checkNotNull(request, "input must not be null!");
-
-        return request.trim().split(" ");
+    public CommandNotBoundException(String message, Throwable cause) {
+        super(message, cause);
     }
-
 }

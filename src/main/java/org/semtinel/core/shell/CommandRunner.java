@@ -40,44 +40,64 @@ public class CommandRunner {
     @Inject
     private Shell shell;
 
+    private Collection<Method> commandAnnotatedMethods;
+
     private Map<Command, Method> commandMapping = new HashMap<Command, Method>();
 
-    public void init() {
-        Preconditions.checkNotNull(strategy, "command execution strategy must not be null!");
-        Preconditions.checkNotNull(shell, "shell must not be null!");
-
-        Collection<Method> commandMethods = getMethodsAnnotatedWith(strategy, Command.class);
-
-        for (Method method : commandMethods) {
-            Command command = method.getAnnotation(Command.class);
-
-            if (isNoArgsMethod(method)) {
-                commandMapping.put(command, method);
-            }
+    private Collection<Method> getCommandAnnotatedMethods() {
+        if (commandAnnotatedMethods == null) {
+            commandAnnotatedMethods = getMethodsAnnotatedWith(strategy, Command.class);
         }
+
+        return commandAnnotatedMethods;
     }
 
     public void executeCommand(String commandName, String[] arguments) {
-        for (Command key : commandMapping.keySet()) {
-            if (key.name().equals(commandName)) {
-                try {
-                    commandMapping.get(key).invoke(strategy);
-                } catch (IllegalAccessException e1) {
-                    shell.flashMessage(
-                            String.format("method for command %s not accessable!", commandName)
-                    );
-                } catch (IllegalArgumentException e2) {
-                    shell.flashMessage(
-                            String.format("method for command %s got wrong parameters!", commandName)
-                    );
-                }  catch (InvocationTargetException e3) {
-                    shell.flashMessage(
-                            String.format("invocation target exception for command %s", commandName)
-                    );
-                }
-            }
+        if (commandName.isEmpty()) {
+            return;
+        }
+        
+        Method mappedMethod;
+
+        try {
+            mappedMethod = getCommandMethodForCommandName(commandName);
+        } catch (CommandNotBoundException e) {
+            shell.flashMessage(e.getMessage());
+            return;
+        }
+
+        if (isNoArgsMethod(mappedMethod)) {
+            invokeMethod(mappedMethod);
         }
     }
 
+    private void invokeMethod(Method method, Object... args) {
+        try {
+            method.invoke(strategy, args);
+        } catch (IllegalAccessException e1) {
+            shell.flashMessage(
+                    String.format("method %s is not accessible!", method.getName())
+            );
+        } catch (IllegalArgumentException e2) {
+            shell.flashMessage(
+                    String.format("method for command %s got wrong parameters!", method.getName())
+            );
+        }  catch (InvocationTargetException e3) {
+            shell.flashMessage(
+                String.format("invocation target exception for command %s", method.getName())
+            );
+        } 
+    }
 
+    private Method getCommandMethodForCommandName(String commandName) {
+        for (Method method : getCommandAnnotatedMethods()) {
+            if (method.getAnnotation(Command.class).name().equals(commandName)) {
+                return method;
+            }
+        }
+
+        throw new CommandNotBoundException(
+                String.format("command '%s' is not bound!", commandName)
+        );
+    }
 }

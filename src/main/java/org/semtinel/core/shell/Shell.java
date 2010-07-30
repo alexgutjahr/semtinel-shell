@@ -32,4 +32,6 @@ public interface Shell {
 
     public void requestShutdown();
 
+    public void setVerbose(boolean verbose);
+    
 }
