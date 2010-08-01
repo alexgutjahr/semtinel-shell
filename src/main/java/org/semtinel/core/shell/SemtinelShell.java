@@ -62,7 +62,7 @@ public class SemtinelShell extends Thread implements Shell {
         try {
             while (!shutdownRequested && (input = readUserInputFrom(reader)) != null) {
                 ParseResult result = parser.parse(input);
-                runner.executeCommand(result.getCommandName(), result.getArguments());
+                runner.executeCommand(result.getCommandName(), result.getOptions());
             }
         } catch (IOException e) {
             shutdown();
@@ -95,6 +95,7 @@ public class SemtinelShell extends Thread implements Shell {
     @Override
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
+        flashMessage("verbose mode is now turned " + (verbose ? "ON" : "OFF"));
     }
 
     @Override

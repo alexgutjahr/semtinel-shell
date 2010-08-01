@@ -19,6 +19,7 @@
 package org.semtinel.core.shell;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 /**
  * @author Alexander Hanschke <dev@alexander-hanschke.de>
@@ -27,18 +28,18 @@ import java.lang.reflect.Method;
 public class ParseResult {
 
     private String commandName;
-    private String[] arguments;
+    private Map<String, String> options;
 
-    public ParseResult(String commandName, String[] arguments) {
+    public ParseResult(String commandName, Map<String, String> options) {
         this.commandName = commandName;
-        this.arguments = arguments;
+        this.options = options;
     }
 
     public String getCommandName() {
         return commandName;
     }
 
-    public String[] getArguments() {
-        return arguments;
+    public Map<String, String> getOptions() {
+        return options;
     }
 }

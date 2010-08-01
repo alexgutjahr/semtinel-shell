@@ -21,6 +21,12 @@ package org.semtinel.core.shell;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
+
 /**
  * @author Alexander Hanschke <dev@alexander-hanschke.de>
  * @version 30.07.2010
@@ -37,13 +43,38 @@ public class Parser {
         Preconditions.checkNotNull(tokens, "error while parsing request!");
         Preconditions.checkState(tokens.length > 0);
 
-        return new ParseResult(tokens[0], new String[]{""});
+        Map<String, String> options = Collections.emptyMap();
+
+        if (hasOptions(tokens)) {
+            options = extractOptionsFromParams(Arrays.copyOfRange(tokens, 1, tokens.length));
+        }
+
+        return new ParseResult(tokens[0], options);
+    }
+
+    private boolean hasOptions(String[] tokens) {
+        return tokens.length > 1;
     }
 
     private String[] tokenize(String request) {
         Preconditions.checkNotNull(request, "input must not be null!");
 
         return request.trim().split(" ");
+    }
+
+    private Map<String, String> extractOptionsFromParams(String[] params) {
+        Pattern pattern = Pattern.compile("\\w+=.+");
+
+        Map<String, String> options = new HashMap<String, String>();
+
+        for (String parameter : params) {
+            if (pattern.matcher(parameter).matches()) {
+                String[] keyAndValue = parameter.split("=");
+                options.put(keyAndValue[0], keyAndValue[1]);
+            }
+        }
+
+        return options;
     }
 
 }

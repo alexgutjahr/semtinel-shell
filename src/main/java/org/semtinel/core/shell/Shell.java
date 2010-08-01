@@ -24,14 +24,34 @@ package org.semtinel.core.shell;
  */
 public interface Shell {
 
+    /**
+     *
+     * @param message the message to be flashed on the shell
+     */
     public void flashMessage(String message);
 
+    /**
+     *
+     * @param status the {@link ShellStatus} of the shell
+     */
     public void setStatus(ShellStatus status);
 
+    /**
+     *
+     * @return the shell prompt
+     */
     public String getShellPrompt();
 
+    /**
+     * requests the shell to shutdown - however this action does not guarantee an immediate shutdown,
+     * as the shell may perform activities before shutting down eventually
+     */
     public void requestShutdown();
 
+    /**
+     *
+     * @param verbose {@code true} will flash all status changes on the shell
+     */
     public void setVerbose(boolean verbose);
     
 }

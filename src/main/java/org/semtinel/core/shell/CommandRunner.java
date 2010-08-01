@@ -20,13 +20,15 @@ package org.semtinel.core.shell;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
+import org.semtinel.core.shell.util.ConversionUtils;
+
+import static org.semtinel.core.shell.util.ConversionUtils.*;
 import static org.semtinel.core.shell.util.ReflectionUtils.*;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Alexander Hanschke <dev@alexander-hanschke.de>
@@ -52,7 +54,7 @@ public class CommandRunner {
         return commandAnnotatedMethods;
     }
 
-    public void executeCommand(String commandName, String[] arguments) {
+    public void executeCommand(String commandName, Map<String, String> options) {
         if (commandName.isEmpty()) {
             return;
         }
@@ -68,7 +70,35 @@ public class CommandRunner {
 
         if (isNoArgsMethod(mappedMethod)) {
             invokeMethod(mappedMethod);
+        } else {
+            resolveOptionsToArguments(mappedMethod, options);
         }
+    }
+
+    private void resolveOptionsToArguments(Method method, Map<String, String> options) {
+        Annotation[][] annotations = method.getParameterAnnotations();
+        Class<?>[] parameterTypes = method.getParameterTypes();
+
+        List<Object> invocationParameters = new ArrayList<Object>();
+
+        Preconditions.checkState(annotations.length == parameterTypes.length);
+
+        int index = 0;
+        for (Annotation[] annotationsOnType : annotations) {
+            for (Annotation annotationOnType : annotationsOnType) {
+                if (annotationOnType instanceof Option) {
+                    String key = ((Option) annotationOnType).key();
+
+                    if (options.containsKey(key)) {
+                        invocationParameters.add(parseToType(options.get(key), parameterTypes[index]));
+                    }
+                }
+            }
+            
+            index++;
+        }
+
+        invokeMethod(method, invocationParameters.toArray());
     }
 
     private void invokeMethod(Method method, Object... args) {
