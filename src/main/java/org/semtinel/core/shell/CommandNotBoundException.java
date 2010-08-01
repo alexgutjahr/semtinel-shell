@@ -22,7 +22,7 @@ package org.semtinel.core.shell;
  * @author Alexander Hanschke <dev@alexander-hanschke.de>
  * @version 30.07.2010
  */
-public class CommandNotBoundException extends RuntimeException {
+public class CommandNotBoundException extends CommandExecutionException {
 
     public CommandNotBoundException(String message) {
         super(message);

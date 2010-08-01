@@ -20,7 +20,6 @@ package org.semtinel.core.shell;
 
 import com.google.inject.Inject;
 
-import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -32,29 +31,23 @@ public class CommandExecutionStrategy {
     @Inject
     private Shell shell;
 
-    @Command(name = "time", help = "display the current time")
+    @Command(name = "time", help = "display the current time", usage = "time")
     public void time() {
         shell.flashMessage(new Date().toString());
     }
 
-    @Command(name = "help", help = "display the help")
-    public void help(@Option(key = "commands", help = "a collection of all available commands")
-    Collection<Command> commands) {
-        
-        for (Command command : commands) {
-            shell.flashMessage(
-                    String.format("%s\n\t%s", command.name(), command.help())
-            );
-        }
-    }
-
-    @Command(name = "quit", help = "shutdown the shell")
+    @Command(name = "quit", help = "shutdown the shell", usage = "quit")
     public void shutdown() {
         shell.requestShutdown();
     }
 
-    @Command(name = "config", help = "configure the shell")
+    @Command(name = "config", help = "configure the shell", usage = "config verbose=[true|false]")
     public void config(@Option(key = "verbose", help = "define logging behavior") boolean verbose) {
         shell.setVerbose(verbose);                
+    }
+
+    @Command(name = "echo", help = "echo the value", usage = "echo value=hello")
+    public void echo(@Option(key = "value") String value) {
+        shell.flashMessage(value);
     }
 }

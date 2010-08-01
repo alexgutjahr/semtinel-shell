@@ -20,7 +20,7 @@ package org.semtinel.core.shell;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
-import org.semtinel.core.shell.util.ConversionUtils;
+import org.semtinel.core.shell.util.ConversionException;
 
 import static org.semtinel.core.shell.util.ConversionUtils.*;
 import static org.semtinel.core.shell.util.ReflectionUtils.*;
@@ -68,14 +68,23 @@ public class CommandRunner {
             return;
         }
 
-        if (isNoArgsMethod(mappedMethod)) {
-            invokeMethod(mappedMethod);
-        } else {
-            resolveOptionsToArguments(mappedMethod, options);
+        Command command = mappedMethod.getAnnotation(Command.class);
+
+        try {
+            if (isNoArgsMethod(mappedMethod)) {
+                invokeMethod(mappedMethod);
+            } else {
+                invokeMethodWithOptions(mappedMethod, options);
+            }
+        } catch (CommandExecutionException e) {
+                shell.flashMessage(
+                        String.format("could not execute command '%s' [%s]", command.name(), e.getMessage())
+                );
+            shell.flashMessage(String.format("usage: %s", command.usage()));
         }
     }
 
-    private void resolveOptionsToArguments(Method method, Map<String, String> options) {
+    private void invokeMethodWithOptions(Method method, Map<String, String> options) {
         Annotation[][] annotations = method.getParameterAnnotations();
         Class<?>[] parameterTypes = method.getParameterTypes();
 
@@ -90,7 +99,13 @@ public class CommandRunner {
                     String key = ((Option) annotationOnType).key();
 
                     if (options.containsKey(key)) {
-                        invocationParameters.add(parseToType(options.get(key), parameterTypes[index]));
+                        try {
+                            invocationParameters.add(parseToType(options.get(key), parameterTypes[index]));
+                        } catch (ConversionException e) {
+                            throw new CommandBindingException(
+                                    String.format("cannot assign '%s' to '%s'!", options.get(key), parameterTypes[index])
+                            );
+                        }
                     }
                 }
             }
@@ -105,17 +120,11 @@ public class CommandRunner {
         try {
             method.invoke(strategy, args);
         } catch (IllegalAccessException e1) {
-            shell.flashMessage(
-                    String.format("method %s is not accessible!", method.getName())
-            );
+            throw new CommandExecutionException(String.format("method %s is not accessible!", method.getName()), e1);
         } catch (IllegalArgumentException e2) {
-            shell.flashMessage(
-                    String.format("invalid arguments for method %s!", method.getName())
-            );
+            throw new CommandExecutionException(String.format("invalid arguments for method %s!", method.getName()), e2);
         }  catch (InvocationTargetException e3) {
-            shell.flashMessage(
-                String.format("invocation target exception for method %s", method.getName())
-            );
+            throw new CommandExecutionException(String.format("invocation target exception for method %s", method.getName()), e3);
         } 
     }
 

@@ -42,5 +42,11 @@ public @interface Command {
      * @return some information about what the particular command does
      */
     String help();
+
+    /**
+     *
+     * @return a valid sample for this command
+     */
+    String usage();
     
 }
