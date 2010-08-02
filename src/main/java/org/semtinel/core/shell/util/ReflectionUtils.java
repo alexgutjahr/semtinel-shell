@@ -45,14 +45,5 @@ public class ReflectionUtils {
     public static boolean isNoArgsMethod(Method method) {
         return method.getParameterTypes().length == 0;
     }
-
-    public static boolean isMethodPresent(String methodName, Class<?> clazz) {
-        for (Method method : clazz.getDeclaredMethods()) {
-            if (method.getName().equals(methodName)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
+    
 }

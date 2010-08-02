@@ -44,8 +44,6 @@ public class CommandRunner {
 
     private Collection<Method> commandAnnotatedMethods;
 
-    private Map<Command, Method> commandMapping = new HashMap<Command, Method>();
-
     private Collection<Method> getCommandAnnotatedMethods() {
         if (commandAnnotatedMethods == null) {
             commandAnnotatedMethods = getMethodsAnnotatedWith(strategy, Command.class);
@@ -77,9 +75,9 @@ public class CommandRunner {
                 invokeMethodWithOptions(mappedMethod, options);
             }
         } catch (CommandExecutionException e) {
-                shell.flashMessage(
-                        String.format("could not execute command '%s' [%s]", command.name(), e.getMessage())
-                );
+            shell.flashMessage(
+                    String.format("could not execute command '%s' [%s]", command.name(), e.getMessage())
+            );
             shell.flashMessage(String.format("usage: %s", command.usage()));
         }
     }
