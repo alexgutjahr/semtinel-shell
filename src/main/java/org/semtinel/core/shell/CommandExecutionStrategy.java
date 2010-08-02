@@ -20,7 +20,11 @@ package org.semtinel.core.shell;
 
 import com.google.inject.Inject;
 
+import javax.swing.text.DateFormatter;
+import java.text.DateFormat;
 import java.util.Date;
+import java.util.Formatter;
+import java.util.Locale;
 
 /**
  * @author Alexander Hanschke <dev@alexander-hanschke.de>
@@ -31,9 +35,15 @@ public class CommandExecutionStrategy {
     @Inject
     private Shell shell;
 
+    private DateFormat df;
+
+    public CommandExecutionStrategy() {
+        df = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.MEDIUM, Locale.getDefault());
+    }
+
     @Command(name = "time", help = "display the current time", usage = "time")
     public void time() {
-        shell.flashMessage(new Date().toString());
+        shell.flashMessage(df.format(new Date()));
     }
 
     @Command(name = "quit", help = "shutdown the shell", usage = "quit")
