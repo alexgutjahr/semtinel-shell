@@ -44,6 +44,19 @@ public class CommandRunner {
 
     private Collection<Method> commandAnnotatedMethods;
 
+    private Collection<Class<?>> supportedParameterTypes;
+
+    {
+        supportedParameterTypes = new HashSet<Class<?>>();
+
+        supportedParameterTypes.add(int.class);
+        supportedParameterTypes.add(long.class);
+        supportedParameterTypes.add(float.class);
+        supportedParameterTypes.add(double.class);
+        supportedParameterTypes.add(char.class);
+        supportedParameterTypes.add(String.class);
+    }
+
     private Collection<Method> getCommandAnnotatedMethods() {
         if (commandAnnotatedMethods == null) {
             commandAnnotatedMethods = getMethodsAnnotatedWith(strategy, Command.class);
@@ -98,7 +111,13 @@ public class CommandRunner {
 
                     if (options.containsKey(key)) {
                         try {
-                            invocationParameters.add(parseToType(options.get(key), parameterTypes[index]));
+                            Class<?> parameterType = parameterTypes[index];
+
+                            if (supportsParameterType(parameterType)) {
+                                invocationParameters.add(parseToType(options.get(key), parameterType));
+                            } else {
+                                throw new UnsupportedParameterTypeException(parameterType);
+                            }
                         } catch (ConversionException e) {
                             throw new CommandBindingException(
                                     String.format("cannot assign '%s' to '%s'!", options.get(key), parameterTypes[index])
@@ -136,5 +155,9 @@ public class CommandRunner {
         throw new CommandNotBoundException(
                 String.format("command '%s' is not bound!", commandName)
         );
+    }
+
+    private boolean supportsParameterType(Class<?> parameterType) {
+        return supportedParameterTypes.contains(parameterType);
     }
 }

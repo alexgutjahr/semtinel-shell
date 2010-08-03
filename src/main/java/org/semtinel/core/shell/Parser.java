@@ -21,10 +21,7 @@ package org.semtinel.core.shell;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**

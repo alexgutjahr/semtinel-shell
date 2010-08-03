@@ -21,6 +21,7 @@ package org.semtinel.core.shell;
 import com.google.inject.Inject;
 
 import javax.swing.text.DateFormatter;
+import java.io.File;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Formatter;
@@ -60,4 +61,5 @@ public class CommandExecutionStrategy {
     public void echo(@Option(key = "value") String value) {
         shell.flashMessage(value);
     }
+
 }
